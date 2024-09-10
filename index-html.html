@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verkaufsgespräch Quiz</title>
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        // Hier kommt der gesamte React-Code
+        const initialSteps = [
+          { id: 'kontaktaufnahme', title: 'Kontaktaufnahme zum Kunden/Begrüßung' },
+          { id: 'bedarfsermittlung', title: 'Ermittlung des Kaufwunsches/Bedarfsermittlung' },
+          { id: 'warenvorlage', title: 'Warenvorlage' },
+          { id: 'argumentation', title: 'Verkaufsargumentation' },
+          { id: 'preisnennung', title: 'Preisnennung' },
+          { id: 'einwandbehandlung', title: 'Einwandbehandlung' },
+          { id: 'kaufentscheidung', title: 'Kaufentscheidung herbeiführen' },
+          { id: 'kaufabschluss', title: 'Abschluss der Verkaufsverhandlung/Kaufabschluss' }
+        ];
+
+        const correctOrder = initialSteps.map(step => step.id);
+
+        const VerkaufsgespraechQuizSimple = () => {
+          const [steps, setSteps] = React.useState([...initialSteps].sort(() => Math.random() - 0.5));
+          const [isCorrect, setIsCorrect] = React.useState(null);
+
+          const moveStep = (index, direction) => {
+            const newSteps = [...steps];
+            const [removedStep] = newSteps.splice(index, 1);
+            newSteps.splice(index + direction, 0, removedStep);
+            setSteps(newSteps);
+          };
+
+          const checkOrder = () => {
+            const currentOrder = steps.map(step => step.id);
+            setIsCorrect(JSON.stringify(currentOrder) === JSON.stringify(correctOrder));
+          };
+
+          return (
+            <div className="max-w-2xl mx-auto p-4">
+              <h1 className="text-2xl font-bold mb-4">Ablauf eines Verkaufsgesprächs</h1>
+              <p className="mb-4">Bringen Sie die Phasen eines Verkaufsgesprächs in die richtige Reihenfolge.</p>
+              
+              {steps.map((step, index) => (
+                <div key={step.id} className="mb-2 border rounded p-2 flex items-center justify-between">
+                  <div className="font-semibold">{step.title}</div>
+                  <div>
+                    <button 
+                      onClick={() => moveStep(index, -1)} 
+                      disabled={index === 0}
+                      className="mr-2 p-1 border rounded"
+                    >
+                      ↑
+                    </button>
+                    <button 
+                      onClick={() => moveStep(index, 1)} 
+                      disabled={index === steps.length - 1}
+                      className="p-1 border rounded"
+                    >
+                      ↓
+                    </button>
+                  </div>
+                </div>
+              ))}
+
+              <button onClick={checkOrder} className="mt-4 p-2 bg-blue-500 text-white rounded">
+                Reihenfolge überprüfen
+              </button>
+              
+              {isCorrect !== null && (
+                <p className={`mt-4 ${isCorrect ? 'text-green-600' : 'text-red-600'}`}>
+                  {isCorrect ? 'Richtig! Die Reihenfolge ist korrekt.' : 'Leider nicht ganz richtig. Versuchen Sie es erneut!'}
+                </p>
+              )}
+            </div>
+          );
+        };
+
+        ReactDOM.render(<VerkaufsgespraechQuizSimple />, document.getElementById('root'));
+    </script>
+</body>
+</html>
